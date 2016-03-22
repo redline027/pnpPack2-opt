@@ -1,0 +1,39 @@
+function [betas, fGuess, avgerr] = optim_beta(betas, N, fGuess, L, R)
+%{
+x = betas;
+
+            [ret, xpopt, info1, covar]=levmar('refine_wb_res', x, R, itmax, options, fGuess, L, N);
+
+        if (ret >= 0)
+            sol1 = generateBetaSqsFromBetas(N, xpopt);
+            resVal = info1(2);
+        else
+            sol1 = generateBetaSqsFromBetas(N, x);
+            xpopt = x;            
+            resVal = info1(1);
+        end 
+
+        resCosts(candsInd) = resVal;        
+
+            [ret, poptf, info1, covar]=levmar('refine_f_res', fGuess, R, itmax, options, L, sol1); 
+        if (ret == -1)            
+            poptf = fGuess;
+        end
+        if (ret >= 0)
+            resCosts(candsInd) = info1(2); 
+        else 
+            resCosts(candsInd) = info1(1); 
+%}
+
+opts = optimset('Algorithm', 'levenberg-marquardt');
+lb = [];
+ub = [];
+[xpopt,resnorm,residual,exitflag,info] = lsqcurvefit(@refine_wb_res,x,fGuess,L,N,R,lb,ub,opts);
+
+sol1 = generateBetaSqsFromBetas(N, xpopt);
+
+[poptf,resnorm,residual,exitflag,info] = lsqcurvefit(@refine_r_res,fGuess,L,sol1,R,lb,ub,opts);
+
+avgerr = info.firstorderopt;
+
+end
