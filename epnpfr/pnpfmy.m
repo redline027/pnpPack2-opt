@@ -50,7 +50,7 @@ function [f1,R1,t1] = pnpfmy(pts, Uc, tarPtNum, isFast, pnpOpts)
         if (doTimeMes)
             s5 = toc(s1)
         end        
-        currentSolution = collectResult(retVal, Rest, test, fest, Uc, pts, currentSolution, isFast, pnpOpts, XN, C, A, avgerr);
+        currentSolution = collectResult(retVal, Rest, test, fest, Uc, pts, currentSolution, isFast, pnpOpts, XN, C, A, tarPtNum);
         if (doTimeMes)
             s6 = toc(s1)
         end
@@ -71,17 +71,39 @@ function [f1,R1,t1] = pnpfmy(pts, Uc, tarPtNum, isFast, pnpOpts)
     end
 end
 
-function currentSolution = collectResult(retVal, Rest, test, fest, Uc, pts, currentSolution, isFast, pnpOpts, XN, C, A, avgErr)
+function currentSolution = collectResult(retVal, Rest, test, fest, Uc, pts, currentSolution, isFast, pnpOpts, XN, C, A, tarPtNum)
     if (retVal > 0)        
         noDist = 0;
         
-        [Cc,Xc]=compute_norm_sign_scaling_factor(XN,C,A,pts);
-        [R1,t1]=getrotT(pts,Xc);
+        if (tarPtNum == 4)
+            [Cc,Xc]=compute_norm_sign_scaling_factor(XN,C,A,pts);
+            [R1,t1]=getrotT(pts,Xc);
+        else
+            F = []; 
+            G = [];
+            for ptInd = 1:3
+                for ptInd2 = ptInd+1:3
+                    fcol = C(:, ptInd) - C(:, ptInd2);
+                    gcol = XN(:, ptInd) - XN(:, ptInd2);
+                    F = [F fcol];
+                    G = [G gcol];                                            
+                end
+            end  
+            F(:, 3) = cross(F(:, 1), F(:, 2));
+            G(:, 3) = cross(G(:, 1), G(:, 2));
+            R1 = G/F;
+            t1 = XN(:, 1) - R1*C(:, 1);
+        end
+        
+        reproj = R1*pts+t1*ones(1,size(pts, 2));
+        reproj = reproj./repmat(reproj(3,:),3,1);
+        err = Uc-fest*reproj(1:2,:);
+        err = sqrt(sum(sum(err.*err))/size(pts, 2));
         
         solution.R = R1;
         solution.t = t1;
         solution.f = fest;
-        solution.avgErr = avgErr;
+        solution.avgErr = err;
         currentSolution = findBetterSolution(solution, currentSolution);        
     end    
 end

@@ -10,24 +10,20 @@ warning off;
 % experimental parameters
 nl= 2;
 npts= 6:1:15;
-num= 500;
+num= 100;
 
 % compared methods
-A= zeros(size(npts));
-B= zeros(num,size(npts));
-
-
 
 A= zeros(size(npts));
-B= zeros(num,size(npts));
-name= {'HOMO', 'UPnPf', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPR'};
-f= {   @HOMO, @upnp_planar_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr_planar};
-marker= { 'x', 'o', '>', 's', '+','<'};
-color= {'r','g', 'm','k','c','b'};
-markerfacecolor=  {'r','g','m','n','n','r'};
-linestyle= {'-','-','-','-','-','-'};
+B= zeros(num,length(npts));
+name= {'HOMO', 'UPnPf', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPR_{opt}', 'EPnPR'};
+f= {   @HOMO, @upnp_planar_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr_planar, @epnpfr_planar_orig};
+marker= { 'x', 'o', '>', 's', '+','<','x'};
+color= {'r','g', 'm','k','c','b','r'};
+markerfacecolor=  {'r','g','m','n','n','r','g'};
+linestyle= {'-','-','-','-','-','-','-'};
 
-inds = [4 6];
+inds = [6 7];
 % inds = [2 4 5 6];
 % inds = [1:7]
 f = f(inds);
@@ -72,7 +68,7 @@ for i= 1:length(npts)
         if npt >= 6
             % pose estimation
             for k= 1:length(method_list)
-                 time1=tic
+                 time1=tic;
                  if strcmp(method_list(k).name, 'RPnP') %using ground-truth focal length
                      [f1,R1,t1]= method_list(k).f(XXw,xxn,diag([f,f,1]));
                  else
@@ -89,7 +85,7 @@ for i= 1:length(npts)
                 while size(t1,2) < 1
                     [f1,R1,t1]= method_list(k).f(XXw,xxn);                    
                 end
-                s = toc(time1)      
+                s = toc(time1);      
                 %choose the solution with smallest error 
                 index_best = 1;
                 error = inf;
@@ -204,7 +200,7 @@ for i= 1:length(npts)
     end
 end
 
-
+%{
 
 close all;
 yrange= [0 5];
@@ -363,3 +359,83 @@ xdrawgraph(npts,yrange,method_list,'mean_reproj','Mean Reproj Error',...
 % xdrawgraph(npts,yrange,method_list,'med_reproj','Median Reproj Error',...
 %     'Number of Points','Reproj Error (pixels)');
 % 
+%}
+
+
+close all;
+yrange= [0 5];
+
+i= 0; w= 300; h= 300;
+
+figure('color','w','position',[w*i,100,w,h]);i=i+1;
+xdrawgraph(npts,yrange,method_list,'med_r','Rotation',...
+    'Number of Points','Rotation Error (degrees)',2);
+
+yrange= [0 10];
+figure('color','w','position',[w*i,100,w,h]);i=i+1;
+xdrawgraph(npts,yrange,method_list,'med_t','Translation',...
+    'Number of Points','Translation Error (%)',2);
+
+figure('color','w','position',[w*i,100,w,h]);i=i+1;
+xdrawgraph(npts,yrange,method_list,'med_foc','Focal Length',...
+    'Number of Points','Focal Length Error (%)',2);
+
+figure('color','w','position',[w*i,100,w,h]);i=i+1;
+xdrawgraph(npts,yrange,method_list,'med_reproj','Reprojection',...
+    'Number of Points','Reprojection Error (pixels)',2);
+yrange= [0 0.05];
+figure('color','w','position',[w*i,100,w,h]);i=i+1;
+xdrawgraph(npts,yrange,method_list,'avg_t','Time',...
+    'Average Runtime (sec)','Average Runtime (sec)',2);
+
+%draw the boxplot of rotation error
+close all;
+yrange = [0 10];
+i= 0; w= 300; h= 300;
+for i = 1:length(inds)
+    methodInd = inds(i);
+    figure('color','w','position',[w*i,100,w,h]);
+    boxplot(method_list(i).reproj,npts);
+    ylim(yrange); set(gca,'xtick',npts);
+    title(method_list(i).name,'FontSize',12,'FontName','Arial');
+    xlabel('Number of Points','FontSize',11);
+    ylabel('Reprojection Error (pixels)','FontSize',11);
+end
+
+figure('color','w','position',[w*(i+1),100,w,h]);
+hold('all');
+for i = 1:length(method_list)
+    plot(npts(1):npts(length(npts)), method_list(i).mean_reproj(1:end),'marker',method_list(i).marker,...
+        'color',method_list(i).color,...
+        'markerfacecolor',method_list(i).markerfacecolor,...
+        'displayname',method_list(i).name, ...
+        'LineWidth',2,'MarkerSize',8,'LineStyle',method_list(i).linestyle)
+end
+title('Mean Reprojection Error','FontSize',12,'FontName','Arial');
+xlabel('Number of Points','FontSize',11);
+ylabel('Reprojection Error (degrees)','FontSize',11);
+
+vars = zeros(length(npts), 2);
+for i = 1:length(npts)
+    for k = 1:2
+        vars(i,k) = var(method_list(k).reproj(:,i));
+    end
+end
+
+figure('color','w','position',[w,100,w,h]);
+hold('all');
+markerlist = {'o-', '*-'};
+for i = 1:2
+    p(i) = plot(npts, vars(:,i), markerlist {i}, 'displayname',method_list(i).name);
+end
+title('Variance of Errors','FontSize',12,'FontName','Arial');
+xlabel('Gaussian Image Noise (pixels)','FontSize',11);
+ylabel('Variance (pixels)','FontSize',11);
+legend(p,1);
+
+
+rmpath(genpath('rpnp1.0'));
+rmpath(genpath('DLT'));
+rmpath(genpath('C:\zheng\work0919\PnP+f\UPnP'))
+
+
