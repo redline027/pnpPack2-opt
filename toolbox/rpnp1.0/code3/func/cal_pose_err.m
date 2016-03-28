@@ -13,10 +13,10 @@ exyz(exyz<-1)= -1;
 
 y(1)= max(abs(acos(exyz)))*180/pi;
 
-q1 = Matrix2Quaternion(R1);
-q2 = Matrix2Quaternion(R2);
+%q1 = Matrix2Quaternion(R1);
+%q2 = Matrix2Quaternion(R2);
 
-y1(1) = norm(q1-q2)/norm(q2)*100;
+%y1(1) = norm(q1-q2)/norm(q2)*100;
 
 if isnan(y(1))
     txt;

@@ -52,8 +52,9 @@ function [C V D A] = preprocessPNP(P, U0, tarPtNum)
           AU1' AU2' U12];
     if (doTimeMes)
 %          s3prep = toc(sv)
-    end
+    end;
      [A1, D0, V0] = svd(M1);
+     
 %     [A11, D, V0] = svd(M1'*M1);
     if (tarPtNum == 4)
         inds = [1 5 9 2 6 10 3 7 11 4 8 12];

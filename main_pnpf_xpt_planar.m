@@ -17,14 +17,14 @@ num= 500;
 
 % compared methods
 A= zeros(size(nls));
-B= zeros(num,size(nls));
-name= {'HOMO', 'UPnPf', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPR'};
-f= {   @HOMO, @upnp_planar_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr_planar};
-marker= { 'x', 'o', '>', 's', '+','<'};
-color= {'r','g', 'm','k','c','b'};
-markerfacecolor=  {'r','g','m','n','n','r'};
-linestyle= {'-','-','-','-','-','-'};
-inds = [4 6];
+B= zeros(num,length(nls));
+name= {'HOMO', 'UPnPf', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPR', 'EPnPR_{opt}'};
+f= {   @HOMO, @upnp_planar_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr_planar_orig, @epnpfr_planar};
+marker= { 'x', 'o', '>', 's', '+','<', 's', '+'};
+color= {'r','g', 'm','k','c','b','k','c'};
+markerfacecolor=  {'r','g','m','n','n','r','m','n'};
+linestyle= {'-','-','-','-','-','-','-','-'};
+inds = [6 7];
 % inds = [2 4 5 6];
 % inds = [1:7]
 f = f(inds);
@@ -77,7 +77,7 @@ for i= 1:length(nls)
                 catch
                     fprintf(['   The solver - ',method_list(k).name,' - encounters internal errors! \n']);
                     index_fail = [index_fail, j];
-                    break;
+                    continue;
                 end
              end
                 %no solution

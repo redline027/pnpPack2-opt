@@ -14,23 +14,23 @@ npt= 6;
 num = 500
 % compared methods
 A= zeros(size(nls));
-B= zeros(num,size(nls));
+B= zeros(num,length(nls));
 
-addpath('C:\Users\Александр Вахитов\Documents\materials\pnp\');
-addpath('C:\Users\Александр Вахитов\Documents\materials\pnp\GPnPf-Toolbox\UPnP');
-addpath('C:\Users\Александр Вахитов\Documents\materials\pnp\GPnPf-Toolbox\UPnP\pose_functions');
+%addpath('C:\Users\Александр Вахитов\Documents\materials\pnp\');
+%addpath('C:\Users\Александр Вахитов\Documents\materials\pnp\GPnPf-Toolbox\UPnP');
+%addpath('C:\Users\Александр Вахитов\Documents\materials\pnp\GPnPf-Toolbox\UPnP\pose_functions');
 
-addpath('C:\svn2\lib\levmar-2.6\matlab');
+%addpath('C:\svn2\lib\levmar-2.6\matlab');
 
-name= {'DLT', 'UPnPf', 'UPnPf+GN', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPfR'};
-f= {   @DLT, @upnp_interface,  @upnp_GN_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr};
-marker= { 'x', 'o', 'd', '>', 's', '+', '+','x'};
-color= {'r','g','b','m','k','c', 'r','c'};
-markerfacecolor=  {'r','g','n','m','n','n', 'n','n'};
-linestyle= {'-','-','-','-','-','-','-','-'};
+name= {'DLT', 'UPnPf', 'UPnPf+GN', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPfR_{opt}', 'EPnPfR', 'EPnPfR_{opt2}'};
+f= {   @DLT, @upnp_interface,  @upnp_GN_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr, @epnpfr_orig, @epnpfr_opt};
+marker= { 'x', 'o', 'd', '>', 's', '+', '+','x','+', 's'};
+color= {'r','g','b','m','k','c', 'r','c','g'};
+markerfacecolor=  {'r','g','n','m','n','n', 'n','m','g'};
+linestyle= {'-','-','-','-','-','-','-','-','-','-'};
 
 % inds = [3 5 6 7];
-inds = [5 7]
+inds = [7 8 9]
 % inds = [4 5 7];
 % inds = [1:7]
 f = f(inds);
@@ -79,7 +79,7 @@ for i= 1:length(nls)
                 catch
                     fprintf(['   The solver - ',method_list(k).name,' - encounters internal errors! \n']);
                     index_fail = [index_fail, j];
-                    break;
+                    continue;
                 end
             end
 

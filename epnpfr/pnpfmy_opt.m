@@ -76,10 +76,10 @@ function currentSolution = collectResult(retVal, Rest, test, fest, Uc, pts, curr
         noDist = 0;
         
         if (tarPtNum == 4)
-            %[Cc,Xc]=compute_norm_sign_scaling_factor(XN,C,A,pts);
-            %[R1,t1]=getrotT(pts,Xc);
+            [Cc,Xc]=compute_norm_sign_scaling_factor(XN,C,A,pts);
+            [R1,t1]=getrotT(pts,Xc);
             
-            [errFlag, R1, t1] = rtFromC(C, XN, tarPtNum);
+            %[errFlag, R1, t1] = rtFromC(C, XN, tarPtNum);
         else
             F = []; 
             G = [];

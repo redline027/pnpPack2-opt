@@ -9,7 +9,7 @@ addpath(genpath('levmar\matlab'))
 warning off;
 % experimental parameters
 nl= 2;
-npts= 6:1:15;
+npts= 7:1:15;
 num= 100;
 
 % compared methods
@@ -64,6 +64,7 @@ for i= 1:length(npts)
         % projection
         xx= [Xc(1,:)./Xc(3,:); Xc(2,:)./Xc(3,:)]*f;
         xxn= xx+randn(2,npt)*nl;
+        
 
         if npt >= 6
             % pose estimation
@@ -77,7 +78,7 @@ for i= 1:length(npts)
                     catch
                         fprintf(['   The solver - ',method_list(k).name,' - encounters internal errors! \n']);
                         index_fail = [index_fail, j];
-                        break;
+                        continue;
                     end
                  end
                  
@@ -107,6 +108,7 @@ for i= 1:length(npts)
                 err = xxn-f1(index_best)*reproj(1:2,:);
                 err = sqrt(sum(sum(err.*err))/npt);
                 method_list(k).reproj(j,i) = err;
+                
 %                 if (err > 100)
 %                     err;
 %                 end
@@ -199,6 +201,7 @@ for i= 1:length(npts)
         method_list(k).avg_t(i)= sum(method_list(k).tm(:,i)) / size(method_list(k).tm, 1);
     end
 end
+
 
 %{
 

@@ -8,23 +8,24 @@ addpath(genpath('levmar\matlab'))
 warning off;
 % experimental parameters
 nl= 2;
-npts= 7:1:16;
+npts= 6:1:15;
 num= 100;
+
 
 % compared methods
 A= zeros(size(npts));
 %B= zeros(num,size(npts));
 B= zeros(num,length(npts));
-name= {'DLT', 'UPnPf', 'UPnPf+GN', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPfR_{opt}', 'EPnPfR'};
-f= {   @DLT, @upnp_interface,  @upnp_GN_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr, @epnpfr_orig};
-marker= { 'x', 'o', 'd', '>', 's', '+', '<', 'x'};
-color= {'r','g','b','m','k','c','b','r'};
-markerfacecolor=  {'r','g','n','m','n','n','r','g'};
-linestyle= {'-','-','-','-','-','-','-','-'};
+name= {'DLT', 'UPnPf', 'UPnPf+GN', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPfR_{opt}', 'EPnPfR', 'EPnPfR_{opt2}'};
+f= {   @DLT, @upnp_interface,  @upnp_GN_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr, @epnpfr_orig, @epnpfr_opt};
+marker= { 'x', 'o', 'd', '>', 's', '+', '<', 'x', '+'};
+color= {'r','g','b','m','k','c','b','r','c'};
+markerfacecolor=  {'r','g','n','m','n','n','r','g','m'};
+linestyle= {'-','-','-','-','-','-','-','-','-'};
 
 % inds = [5 7];
 %inds = [3 5 6 7];
-inds = [7 8];
+inds = [7 8 9];
 f = f(inds);
 marker = marker(inds);
 color = color(inds);
@@ -43,6 +44,7 @@ for i= 1:length(npts)
     npt= npts(i);
     
     fprintf('npt = %d: ',npt);
+    
   
     index_fail = [];
     
@@ -197,6 +199,7 @@ for i= 1:length(npts)
         method_list(k).avg_t(i)= sum(method_list(k).tm(:,i)) / size(method_list(k).tm, 1);
     end
 end
+
 
 close all;
 yrange= [0 5];

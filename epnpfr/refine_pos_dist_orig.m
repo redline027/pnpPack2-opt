@@ -73,7 +73,7 @@ function [Rest, test, fest, dest, avgerr] = refine_pos_dist_orig(Rest, test, fes
                 ub(7) = fMax;
                 [popt,resnorm,residual,exitflag,info] = lsqcurvefit(@refine_pos_foc_res2,x,pts3d,imvect,lb,ub,opts);                    
             end
-            avgerr = sqrt(info.firstorderopt / size(pts3d, 2));
+            avgerr = sqrt(resnorm / size(pts3d, 2));
             
             [Rest, test] = decodeEucCamera(popt(1:6));
             fest = popt(7);
