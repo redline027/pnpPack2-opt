@@ -62,7 +62,7 @@ function [f1,R1,t1] = pnpfmy(pts, Uc, tarPtNum, isFast, pnpOpts)
         end
     end
     
-    if ((currentSolution.avgErr  < 0 || norm(currentSolution.t) >100) && isFast == 1 )
+    if ((currentSolution.avgErr  < 0) && isFast == 1 )
         [f1,R1,t1] = pnpfmy(pts, Uc, tarPtNum, 0, pnpOpts);
     else        
         f1 = currentSolution.f;
@@ -79,8 +79,7 @@ function currentSolution = collectResult(retVal, Rest, test, fest, Uc, pts, curr
             %[Cc,Xc]=compute_norm_sign_scaling_factor(XN,C,A,pts);
             %[R1,t1]=getrotT(pts,Xc);
             
-            %[errFlag, R1, t1] = rtFromC(C, XN, tarPtNum);
-            [R1, t1] = compute_R_t(XN,A,pts);
+            [errFlag, R1, t1] = rtFromC(C, XN, tarPtNum);
         else
             F = []; 
             G = [];

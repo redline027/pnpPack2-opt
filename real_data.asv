@@ -1,0 +1,34 @@
+fid = fopen('projs.txt', 'r');
+input = fscanf(fid,'%f');
+fclose(fid);
+projs = zeros(2, 8);
+pts = [60 60 0 60 30 60 60 0; 0 60 60 30 60 0 60 0; 0 0 0 30 30 60 60 60];
+
+ind = 1;
+%while(1)
+for frame = 1:1
+    for i = 1:8
+        projs(1,i) = input(ind);
+        projs(2,i) = input(ind + 1);
+        ind = ind + 2;
+    end
+    if (input(ind) ~= 27)
+        print('Error');
+    end
+    ind = ind + 1;
+    
+    [f_est, R_est, t_est] = epnpfr_real(pts, projs);
+    
+    figure;
+    plot3(pts(1,:), pts(2,:),pts(3,:),'*');
+    p1 = []
+    
+    hold on
+    plot3(0,0,0,'g*');
+    orientation = R_est;
+    location = -t_est' * orientation;
+    cam = plotCamera('Location',location,'Orientation',orientation,'Size',10);
+    cameratoolbar('SetMode','orbit');
+    axis equal
+   
+end

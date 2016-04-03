@@ -16,7 +16,7 @@ num= 100;
 A= zeros(size(npts));
 %B= zeros(num,size(npts));
 B= zeros(num,length(npts));
-name= {'DLT', 'UPnPf', 'UPnPf+GN', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPfR_{opt3}', 'EPnPfR', 'EPnPfR_{opt2}'};
+name= {'DLT', 'UPnPf', 'UPnPf+GN', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPfR_{opt}', 'EPnPfR', 'EPnPfR_{opt2}'};
 f= {   @DLT, @upnp_interface,  @upnp_GN_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr, @epnpfr_orig, @epnpfr_opt};
 marker= { 'x', 'o', 'd', '>', 's', '+', '<', 'x', '+'};
 color= {'r','g','b','m','k','c','b','r','c'};
@@ -25,7 +25,7 @@ linestyle= {'-','-','-','-','-','-','-','-','-'};
 
 % inds = [5 7];
 %inds = [3 5 6 7];
-inds = [7 8];
+inds = [7 8 9];
 f = f(inds);
 marker = marker(inds);
 color = color(inds);
@@ -108,7 +108,16 @@ for i= 1:length(npts)
                 err = xxn-f1(index_best)*reproj(1:2,:);
                 err = sqrt(sum(sum(err.*err))/npt);
                 method_list(k).reproj(j,i) = err;
-                method_list(k).tm(j, i) = s;                
+                method_list(k).tm(j, i) = s;
+                
+                figure;
+                plot3(XXw(1,:), XXw(2,:),XXw(3,:),'*');
+                hold on
+                plot3(0,0,0,'g*');
+                orientation = R1;
+                location = -orientation*t1;
+                cam = plotCamera('Location',location,'Orientation',orientation,'Size',1);
+                
             end
         else
             for k= 1:length(method_list)

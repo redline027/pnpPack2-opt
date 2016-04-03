@@ -10,8 +10,8 @@ warning off;
 
 % experimental parameters
 nls= 1:1:5;
-npt= 6;
-num = 500
+npt= 7;
+num = 500;
 % compared methods
 A= zeros(size(nls));
 B= zeros(num,length(nls));
@@ -22,7 +22,7 @@ B= zeros(num,length(nls));
 
 %addpath('C:\svn2\lib\levmar-2.6\matlab');
 
-name= {'DLT', 'UPnPf', 'UPnPf+GN', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPfR_{opt}', 'EPnPfR', 'EPnPfR_{opt2}'};
+name= {'DLT', 'UPnPf', 'UPnPf+GN', 'GPnPf',   'GPnPf+GN', 'RPnP', 'EPnPfR_{opt3}', 'EPnPfR', 'EPnPfR_{opt2}'};
 f= {   @DLT, @upnp_interface,  @upnp_GN_interface, @GPnP_f, @GPnP_f_GN, @RPnP_interface, @epnpfr, @epnpfr_orig, @epnpfr_opt};
 marker= { 'x', 'o', 'd', '>', 's', '+', '+','x','+', 's'};
 color= {'r','g','b','m','k','c', 'r','c','g'};
@@ -30,7 +30,7 @@ markerfacecolor=  {'r','g','n','m','n','n', 'n','m','g'};
 linestyle= {'-','-','-','-','-','-','-','-','-','-'};
 
 % inds = [3 5 6 7];
-inds = [7 8 9]
+inds = [7 8];
 % inds = [4 5 7];
 % inds = [1:7]
 f = f(inds);
